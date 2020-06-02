@@ -444,4 +444,4 @@ function getParams(mid, max_behot_time) {
     }
 }
 
-// console.log(getParams(4157040672, 0));
+console.log(getParams(4157040672, 0));

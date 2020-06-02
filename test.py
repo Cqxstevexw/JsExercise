@@ -17,39 +17,43 @@ s = requests.session()
 
 ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36"
 proxy = {
-    "http": "socks5://127.0.0.1:1080",
-    "https": "socks5://127.0.0.1:1080"
+    # "http": "socks5://127.0.0.1:1080",
+    # "https": "socks5://127.0.0.1:1080"
 }
 
+import requests
 
-def try_get():
-    print('请求首页')
-    url = 'https://www.yellowpages.net/'
-    headers = {
-        # "sec-fetch-user": "?1",
-        # "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7",
-        # "accept-encoding": "gzip, deflate",
-        # "sec-fetch-site": "none",
-        # "sec-fetch-mode": "navigate",
-        # "upgrade-insecure-requests": "1",
-        # "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-        # "cache-control": "max-age=0",
-        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36",
-        # "sec-fetch-dest": "document"
+ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
+
+headers = {
+    "User-Agent": ua,
+}
+
+s = requests.Session()
+url = 'https://www.toutiao.com/a6833309873531257358/'
+
+resp = s.get(url, headers=headers)
+print(resp.text)
+resp_cookie = resp.cookies.get_dict()
+x = resp_cookie['__ac_nonce']
+
+print(x)
+
+data = {
+    "cookie": x
+}
+r = requests.post('http://121.40.96.182:4006/get_sign', data=data) # 此为__ac_signature参数专属接口 随机免费开放
+__ac_signature = r.json()['signature']
+print('11111:  {}'.format(__ac_signature))
+# x='05ed6198b00858e6a7299'
+# __ac_signature='QqBNxAAgEBBCoE3ERCb.iUKgzNAABx4'
+Cookie = '__ac_nonce=' + x + '; ' + '__ac_signature='+ __ac_signature
+print(Cookie)
+headers.update(
+    {
+        "Cookie": Cookie
     }
-    params = {}
-    res = s.get(url=url, params=params, headers=headers, proxies=proxy)
-    res.encoding = 'utf-8'
-    print('try_get: ', res.status_code)
-    print('try_get: ', res.headers)
-    print('try_get: ', s.cookies)
-    print(type(res.text))
-    print(res.text)
-    # html = res.content
-    # html_doc = str(html, 'utf-8')
-    # html_doc=html.decode("utf-8","ignore")
-    # print(html_doc)
+)
 
-
-if __name__ == '__main__':
-    try_get()
+resp = s.get(url=url, headers=headers).text
+print(resp)
