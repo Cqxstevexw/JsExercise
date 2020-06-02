@@ -121,3 +121,5 @@ ENV/
 stage_files/
 pdf_files/
 txt_files/
+
+node_modules/

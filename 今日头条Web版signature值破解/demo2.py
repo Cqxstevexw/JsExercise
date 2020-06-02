@@ -18,25 +18,26 @@ import js2py
 import execjs
 import requests
 
-toutiaohao_sign_js = """//window.TAC && (console.log(userInfo.id + "" + a[t]),
+toutiaohao_sign_js = """
+function getcc(aaa){
+//window.TAC && (console.log(userInfo.id + "" + a[t]),
 // window = {};
 // global.navigator = {};
 // global.navigator.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36";
 
-window = global;
-document = {
-    body: '',
-};
+window = global={};
+global.document={};
+global.document.body={};
 global.location = {};
 global.location.href = "https://www.toutiao.com/a6816498039964828174/";
 global.location.protocol = "https:";
 global.navigator = {
     userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'
 };
-global.screen = {
-    width: 1920,
-    height: 1080
-};
+// global.screen = {
+//     width: 1920,
+//     height: 1080
+// };
 // window = {};
 // global.navigator = {};
 // global.navigator.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36";
@@ -410,6 +411,7 @@ TAC = function () {
                     S[A] = S[A] >>> g
             }
         }
+        console.log(x);
         return [0, null]
     }
 
@@ -521,6 +523,7 @@ TAC = function () {
 //     dfp: !0
 // });
 
+
 function getParams(__ac_nonce) {
     var url = 'https://www.toutiao.com/i6824014300391145991/';
     var _e = "https://www.toutiao.com/toutiao/api/pc/feed/?min_behot_time=0&category=__all__&utm_source=toutiao&widen=1&tadrequire=true&as=A1358EEDC5CC230&cp=5ED5CCF2F3509E1";
@@ -534,8 +537,10 @@ function getParams(__ac_nonce) {
     return o
 }
 
-var ac_nonce='05ed61206004f228352b0';
-getParams(ac_nonce);
+// var ac_nonce='05ed67a92008641cc7566';
+// getParams(ac_nonce);
+return getParams(aaa)
+}
 """
 
 
@@ -549,40 +554,47 @@ def get_params(ac_nonce):
 
 
 def get_params2(ac_nonce):
-    ctx = js2py.eval_js(toutiaohao_sign_js)
-    p = ctx.call('getParams', ac_nonce)
+    ctx=js2py.EvalJs()
+    ctx.execute(toutiaohao_sign_js)
+    p = ctx.getcc(ac_nonce)
     # print(json.dumps(p, indent=4, ensure_ascii=False))
     return p
 
+def test():
+    ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
 
-ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
-
-headers = {
-    "User-Agent": ua,
-}
-s = requests.Session()
-url = 'https://www.toutiao.com/a6833309873531257358/'
-
-resp = s.get(url, headers=headers)
-print(resp.text)
-resp_cookie = resp.cookies.get_dict()
-x = resp_cookie['__ac_nonce']
-
-print(x)
-
-# __ac_signature = get_params(x)
-# __ac_signature = get_params2(x)
-x = '05ed6513000cd1ed6f047'
-__ac_signature = 'i6st1AAgEBB0VNIra6IiE4urrMAANWK'
-print(__ac_signature)
-Cookie = '__ac_nonce=' + x + '; ' + '__ac_signature=' + __ac_signature
-# Cookie = ''
-print(Cookie)
-headers.update(
-    {
-        "Cookie": Cookie
+    headers = {
+        "User-Agent": ua,
     }
-)
+    s = requests.Session()
+    url = 'https://www.toutiao.com/a6833748976353673740/'
 
-resp = s.get(url=url, headers=headers).text
-print(resp)
+    resp = s.get(url, headers=headers)
+    print(resp.text)
+    resp_cookie = resp.cookies.get_dict()
+    x = resp_cookie['__ac_nonce']
+
+    print(x)
+
+    # __ac_signature = get_params(x)
+    # __ac_signature = get_params2(x)
+    x = '05ed68d57004d67cd3fc5'
+    __ac_signature = 'd3cCPAAgEBCIiP3DXXyRsHd3gyAACmk'
+    print(__ac_signature)
+    Cookie = '__ac_nonce=' + x + '; ' + '__ac_signature=' + __ac_signature
+    # Cookie = ''
+    print(Cookie)
+    headers.update(
+        {
+            "Cookie": Cookie
+        }
+    )
+
+    resp = s.get(url=url, headers=headers).text
+    print(resp)
+
+if __name__ == '__main__':
+    test()
+    # ac_nonce = '05ed67a92008641cc7566'
+    # __ac_signature = get_params(ac_nonce)
+    # __ac_signature = get_params2(ac_nonce)

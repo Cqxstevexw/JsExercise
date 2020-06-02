@@ -1,11 +1,12 @@
-window = global;
+var get_sign = function (nonce, url, userAgent) {
+    window = global;
 global.document = {};
 global.document.body = {};
 global.location = {};
-global.location.href = "https://www.toutiao.com/a6816498039964828174/";
+global.location.href = url;
 global.location.protocol = "https:";
 global.navigator = {
-    userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'
+    userAgent: userAgent
 };
 
 
@@ -485,24 +486,22 @@ TAC = function () {
 //     dfp: true
 // });
 
-// window.byted_acrawler.init({
-//     aid: 99999999,
-//     dfp: !0
-// });
-
-
 function getParams(__ac_nonce) {
-    var url = 'https://www.toutiao.com/i6824014300391145991/';
-    var _e = "https://www.toutiao.com/tprotocoloutiao/api/pc/feed/?min_behot_time=0&category=__all__&utm_source=toutiao&widen=1&tadrequire=true&as=A1358EEDC5CC230&cp=5ED5CCF2F3509E1";
-    var a = {
-        url: _e
-    };
     console.log(11111);
     o = window.byted_acrawler.sign("", __ac_nonce);
-    // o = window.byted_acrawler && window.byted_acrawler.sign ? window.byted_acrawler.sign(a) : "";
     console.log(o);
     return o
 }
 
-var ac_nonce = '05ed68d57004d67cd3fc5';
-getParams(ac_nonce);
+// var ac_nonce = '05ed6812d0081af2b8845';
+return getParams(nonce);
+
+};
+
+exports.get_sign = get_sign;
+
+nonce='05ed6812d0081af2b8845';
+url='https://www.toutiao.com/a6833748976353673740/';
+userAgent='\'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36\'';
+cc=get_sign(nonce, url, userAgent);
+console.log(cc);
