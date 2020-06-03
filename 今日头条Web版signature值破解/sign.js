@@ -25,5 +25,5 @@ exports.get_sign = get_sign;
 nonce='05ed6812d0081af2b8845';
 url='https://www.toutiao.com/a6833748976353673740/';
 userAgent='\'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36\'';
-cc=get_sign(nonce, url, userAgent);
-console.log(cc);
+__ac_signature=get_sign(nonce, url, userAgent);
+console.log(__ac_signature);
