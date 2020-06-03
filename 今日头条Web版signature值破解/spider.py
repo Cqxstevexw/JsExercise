@@ -1,4 +1,13 @@
-var get_sign = function (nonce, url, userAgent) {
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import execjs
+import js2py
+import requests
+import urllib3
+
+urllib3.disable_warnings()
+
+sign_js_text = """var get_sign = function (nonce, url, userAgent) {
     window = global;
     global.location = {};
     global.location.href = url;
@@ -377,6 +386,7 @@ var get_sign = function (nonce, url, userAgent) {
                         S[A] = S[A] >>> g
                 }
             }
+            console.log(x);
             return [0, null]
         }
 
@@ -485,11 +495,77 @@ var get_sign = function (nonce, url, userAgent) {
 
     return window.byted_acrawler.sign("", nonce)
 };
+"""
 
-// exports.get_sign = get_sign;
 
-nonce = "05ed723d0003d74633212";
-url = "https://www.toutiao.com/a6833748976353673740/";
-userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'";
-__ac_signature = get_sign(nonce, url, userAgent);
-console.log(__ac_signature);
+class Toutiao():
+    def __init__(self):
+        self.index_url = 'https://www.toutiao.com/'
+        self.session = requests.Session()
+        self.news_list = ['https://www.toutiao.com/a6833748976353673740/',
+                          'https://www.toutiao.com/a6813910751485362696/']
+        self.nodejs_server = 'http://127.0.0.1:8000/toutiao'
+
+    def get_signature_by_api(self, params):
+        response = requests.get(self.nodejs_server, params=params)
+        signature = response.text
+        print('get_signature_by_api: {}'.format(signature))
+        return signature
+
+    def get_signature_by_execjs(self, params):
+        node = execjs.get()
+        ctx = node.compile(open('sign.js', 'r').read())
+        # ctx = node.compile(sign_js_text)
+        signature = ctx.call('get_sign', params['nonce'], params['url'], params['userAgent'])
+        print('get_signature_by_execjs: {}'.format(signature))
+        return signature
+
+    def get_signature_by_js2py(self, params):
+        ctx = js2py.EvalJs()
+        ctx.execute(open('sign.js', 'r').read())
+        # ctx.execute(sign_js_text)
+        signature = ctx.get_sign(params['nonce'], params['url'], params['userAgent'])
+        print('get_signature_by_js2py: {}'.format(signature))
+        return signature
+
+    def get_news_info(self):
+        for index, url in enumerate(self.news_list):
+            headers = {
+                'authority': 'www.toutiao.com',
+                'pragma': 'no-cache',
+                'cache-control': 'no-cache',
+                'upgrade-insecure-requests': '1',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
+                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'sec-fetch-site': 'same-origin',
+                'sec-fetch-mode': 'navigate',
+                'sec-fetch-dest': 'document',
+                'accept-language': 'zh-CN,zh;q=0.9',
+            }
+            if index == 0:
+                # 第一次获取请求在 response 中获取 key为：__ac_nonce 的值，用来生成 __ac_signature
+                res = self.session.get(url=url, headers=headers, verify=False)
+                nonce = res.cookies['__ac_nonce']
+                user_agent = headers['user-agent']
+                params = {
+                    'nonce': nonce,
+                    'url': url,
+                    'userAgent': user_agent,
+                }
+                signature = self.get_signature_by_api(params)
+                # signature = self.get_signature_by_execjs(params)
+                # signature = self.get_signature_by_js2py(params)
+                self.session.cookies['__ac_signature'] = signature
+                res = self.session.get(url=url, headers=headers, verify=False)
+                print(res.text)
+            else:
+                res = self.session.get(url=url, headers=headers, verify=False)
+                print(res.text)
+
+    def run(self):
+        self.get_news_info()
+
+
+if __name__ == '__main__':
+    tt = Toutiao()
+    tt.run()

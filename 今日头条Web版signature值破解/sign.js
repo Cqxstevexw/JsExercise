@@ -15,15 +15,14 @@ var get_sign = function (nonce, url, userAgent) {
             return t[m.charCodeAt(0) & 15]
         })
     }("var function ().length++return ));break;case ;else{".split("")))();
-    var value =global.byted_acrawler.sign("", nonce);
-    console.log(value);
-    return value
+
+    return global.byted_acrawler.sign("", nonce);
 };
 
-exports.get_sign = get_sign;
+// exports.get_sign = get_sign;
 
-nonce='05ed6812d0081af2b8845';
-url='https://www.toutiao.com/a6833748976353673740/';
-userAgent='\'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36\'';
-__ac_signature=get_sign(nonce, url, userAgent);
+nonce = "05ed722aa00329354d51e";
+url = "https://www.toutiao.com/a6833748976353673740/";
+userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'";
+__ac_signature = get_sign(nonce, url, userAgent);
 console.log(__ac_signature);

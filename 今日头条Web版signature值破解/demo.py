@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import sys
-import requests
-import json
-import js2py
 import execjs
+import js2py
 import requests
 
 toutiaohao_sign_js = """
@@ -535,55 +532,40 @@ return getParams(aaa)
 
 def get_params(ac_nonce):
     node = execjs.get()
-    # ctx = node.compile(open('encryption.js', 'r', encoding='gbk').read())
+    # ctx = node.compile(open('encryption.js', 'r', encoding='utf-8').read())
     ctx = node.compile(toutiaohao_sign_js)
     p = ctx.call('getParams', ac_nonce)
-    # print(json.dumps(p, indent=4, ensure_ascii=False))
     return p
 
 
 def get_params2(ac_nonce):
-    ctx=js2py.EvalJs()
+    ctx = js2py.EvalJs()
     ctx.execute(toutiaohao_sign_js)
     p = ctx.getcc(ac_nonce)
-    # print(json.dumps(p, indent=4, ensure_ascii=False))
     return p
 
-def test():
-    ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
 
+def try_sign(nonce, signature):
+    url = 'https://www.toutiao.com/a6833748976353673740/'
+    ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
     headers = {
         "User-Agent": ua,
     }
     s = requests.Session()
-    url = 'https://www.toutiao.com/a6833748976353673740/'
-
     resp = s.get(url, headers=headers)
     print(resp.text)
     resp_cookie = resp.cookies.get_dict()
-    x = resp_cookie['__ac_nonce']
-
-    print(x)
-
-    # __ac_signature = get_params(x)
-    # __ac_signature = get_params2(x)
-    x = '05ed68d57004d67cd3fc5'
-    __ac_signature = 'd3cCPAAgEBCIiP3DXXyRsHd3gyAACmk'
-    print(__ac_signature)
-    Cookie = '__ac_nonce=' + x + '; ' + '__ac_signature=' + __ac_signature
-    # Cookie = ''
-    print(Cookie)
+    print(resp_cookie['__ac_nonce'])
+    Cookie = '__ac_nonce=' + nonce+ '; ' + '__ac_signature=' + signature
     headers.update(
         {
             "Cookie": Cookie
         }
     )
-
     resp = s.get(url=url, headers=headers).text
     print(resp)
 
 if __name__ == '__main__':
-    test()
-    # ac_nonce = '05ed67a92008641cc7566'
-    # __ac_signature = get_params(ac_nonce)
-    # __ac_signature = get_params2(ac_nonce)
+    nonce = '05ed72362009f3d346e1f'
+    signature = 'pXkcbAAgEBBahuOTPSujeKV5nXAAPu9'
+    try_sign(nonce, signature)
