@@ -24,9 +24,9 @@ import requests
 from des import encrypt, decrypt
 
 headers = {
-    "cookie": "cookie: smidV2=2020030823214532b9386755b96f8d9e2c2d61a27e3e4d00c8f0fe528ce4960; xhsTrackerId=3fc56aab-800d-48a3-c87f-46d939517c41; timestamp1=966284780; hasaki=JTVCJTIyTW96aWxsYSUyRjUuMCUyMChNYWNpbnRvc2glM0IlMjBJbnRlbCUyME1hYyUyME9TJTIwWCUyMDEwXzE1XzMpJTIwQXBwbGVXZWJLaXQlMkY1MzcuMzYlMjAoS0hUTUwlMkMlMjBsaWtlJTIwR2Vja28pJTIwQ2hyb21lJTJGODAuMC4zOTg3LjEyMiUyMFNhZmFyaSUyRjUzNy4zNiUyMiUyQyUyMnpoLUNOJTIyJTJDMjQlMkMtNDgwJTJDdHJ1ZSUyQ3RydWUlMkN0cnVlJTJDJTIydW5kZWZpbmVkJTIyJTJDJTIyZnVuY3Rpb24lMjIlMkNudWxsJTJDJTIyTWFjSW50ZWwlMjIlMkMxMiUyQzglMkNudWxsJTJDJTIyQ2hyb21lJTIwUERGJTIwUGx1Z2luJTNBJTNBUG9ydGFibGUlMjBEb2N1bWVudCUyMEZvcm1hdCUzQSUzQWFwcGxpY2F0aW9uJTJGeC1nb29nbGUtY2hyb21lLXBkZn5wZGYlM0JDaHJvbWUlMjBQREYlMjBWaWV3ZXIlM0ElM0ElM0ElM0FhcHBsaWNhdGlvbiUyRnBkZn5wZGYlM0JOYXRpdmUlMjBDbGllbnQlM0ElM0ElM0ElM0FhcHBsaWNhdGlvbiUyRngtbmFjbH4lMkNhcHBsaWNhdGlvbiUyRngtcG5hY2x+JTIyJTJDMzgwMTgwMDQ1NyU1RA==; timestamp2=3b60c3fd464c80752d2aba3b549018a3; xhs_spid.5dde=6ec9d1ca3a610f2a.1583680905.2.1583719909.1583682674.8e0ddb5a-05ef-413b-9b15-b6c2c2df924d",
+    "cookie": "xhsTrackerId=f760457e-c22d-4165-c1a6-543e85a626ef; xhsTracker=url=user-profile&searchengine=baidu; smidV2=20200715205903e5eeefb846a4e1052665d4a6dc3223d60023b1dbaaa6bfba0; xhs_spses.5dde=*; xhs_spid.5dde=43b1248d3c75b0d8.1594816905.14.1597058739.1597052656.b9d3bbb2-461b-4059-a650-c0bdd2695d68",
     "Referer": "https://www.xiaohongshu.com/web-login/captcha?redirectPath=http%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F5885bc185e87e771bd4647e7",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
 }
 
 
@@ -37,19 +37,18 @@ def _init_slider():
     """
     url = 'https://captcha.fengkongcloud.com/ca/v1/register'
     params = {
-        'organization': 'eR46sBuqF0fdw7KWFLYa',
-        'appId': 'default',
-        'channel': 'web',
-        'lang': 'zh-cn',
-        'model': 'slide',
-        'rversion': '1.0.1',
-        'sdkver': '1.1.3',
-        'data': {},
-        'callback': 'sm_{}'.format(int(time.time() * 1000))
+        "sdkver": "1.1.3",
+        "data": "{}",
+        "rversion": "1.0.1",
+        "appId": "default",
+        "callback": 'sm_{}'.format(int(time.time() * 1000)),
+        "channel": "web",
+        "model": "slide",
+        "lang": "zh-cn",
+        "organization": "eR46sBuqF0fdw7KWFLYa"
     }
     resp = requests.get(url, params=params, headers=headers, timeout=5)
     result = json.loads(resp.text.replace('{}('.format(params['callback']), '').replace(')', ''))
-    print(result)
     if result['riskLevel'] == 'PASS':
         return {
             'k': result['detail']['k'],
@@ -122,7 +121,6 @@ def _get_distance(fg, bg, resize_num=1):
 
     res = cv2.matchTemplate(fg_gray, bg_obj, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_indx, max_indx = cv2.minMaxLoc(res)
-    print(min_val, max_val, min_indx, max_indx)
     distance = max_indx[0] * resize_num
     return distance
 
@@ -224,6 +222,7 @@ def _generate_trace(distance, start_time):
     trace = []
     for index, x in enumerate(tracks_list):
         trace.append([x, y_list[index], timestamp_list[index] - start_time])
+    print(trace)
     return trace
 
 
@@ -234,24 +233,36 @@ def _slider_verify(act, rid):
     :param rid:
     :return:
     """
-    url = 'https://captcha.fengkongcloud.com/ca/v1/fverify'
+    url = 'https://captcha.fengkongcloud.com/ca/v2/fverify'
     params = {
-        "organization": "eR46sBuqF0fdw7KWFLYa",
-        "appId": "default",
-        "channel": "DEFAULT",
-        "act": act,
+        # getMouseAction()
+        "act.os": "web_pc", # 电脑网页端
+        "be": "W5jfUyGuB5w=",   # console值, 1
+        "dj": "9CIOZDUPyjA=",   # 鼠标移动总时间
+        "jr": "SJ5zO5byIjM=",   # 浏览器展示图片长度400
+        "ke": "TrqMDt+cB48=",   # runBotDetection值,0
+        "kw": "7xDP3aCmdEA=",   # 浏览器展示图片高度200
+        "nw": "PVcTg6vY9/U=",
+        # [(0,0,0),(移动的距离,-1,123)鼠标结束点位置]
+        "wz": "C/pJvd2GxsprrKzY1BiAItPt+sgap9LGBEUHPFcDPp70smuyDT4Nj00FSecFypa/iSCqU4ggak+Tn/pWe4fuQRKJUmjh0yigLd7M2iBwmH4=",
+        "zy": "QNA6H8lZT98=",# 移动的距离/400
+
+        "bx": "C22bwpGF1gs=",  # getEncryptContent("web")
+        "ik": "BPYw6OTzSQM=",  # getEncryptContent("default")
+        "ly": "aSznDKeppSw=",  # getEncryptContent("zh-cn")
+
+        # 请求图片返回的
         "rid": rid,
-        "lang": "zh-cn",
+        "organization": "eR46sBuqF0fdw7KWFLYa",
         "ostype": "web",
         "rversion": "1.0.1",
+        "protocol": "4",
         "sdkver": "1.1.3",
         "callback": "sm_{}".format(int(time.time() * 1000)),
     }
     resp = requests.get(url, params=params, headers=headers, timeout=5)
-    print(resp.headers)
-    print(resp.url)
     result = json.loads(resp.text.replace('{}('.format(params['callback']), '').replace(')', ''))
-    print(result)
+    print('验证: {}'.format(result))
     return result
 
 
@@ -277,13 +288,9 @@ def crack():
     download_cap(fg_url, 'fg.png')
     download_cap(bg_url, 'bg.png')
 
-    distance = _get_distance(fg=_init_data['slider_url'], bg=_init_data['captcha_url'])
-    distance = int(distance / 1.5)
-    print('distance: {}'.format(distance))
-    # distance = _get_distance_old(_init_data['slider_url'], _init_data['captcha_url'])
-    # if distance:
-    #     print("新函数的距离", distance_new)
-    #     print("旧的函数距离", distance)
+    distance_all = _get_distance(fg=_init_data['slider_url'], bg=_init_data['captcha_url'])
+    distance = int(distance_all / 1.5)
+    print('原始值: {}, distance: {}'.format(distance_all, distance))
     if not distance:
         return {
             'success': 0,
@@ -297,6 +304,8 @@ def crack():
     rid = _init_data['rid']
     result = _slider_verify(act, rid)
     if result['riskLevel'] == 'PASS':
+        print('成功!!!' * 90)
+        time.sleep(100000)
         return {
             'success': 1,
             'message': '校验成功! ',
@@ -327,7 +336,7 @@ def xhs_capture_verify(rid):
         'Accept': 'application/json, text/plain, */*',
         'Sec-Fetch-Dest': 'empty',
         'X-Sign': 'X586039fbdde8a4a35274f35c5c39ba72',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
         'Content-Type': 'application/json;charset=UTF-8',
         'Origin': 'https://www.xiaohongshu.com',
         'Sec-Fetch-Site': 'same-origin',
@@ -335,7 +344,7 @@ def xhs_capture_verify(rid):
         'Referer': 'https://www.xiaohongshu.com/web-login/captcha?redirectPath=http%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F595657e450c4b408a2cb9581',
         'Accept-Language': 'zh-CN,zh;q=0.9',
     }
-    data = '{"rid":"' + rid + '","callFrom":"web","deviceId":"WHJMrwNw1k/Hy/Tx+X/36g2k+xaNjmJ+v0OrED2kbkCE/eiCwSUJYswisypSvYrtg5b9ZwGK+MxslpyQ8tA/IHBX8kjZlkN3dyeDVhN8AJwtXbErcf8zlJt0zlieX3yDdb2GXgZ5AQVJ276inF+53rrf1T5xekz1fJB82l5Rly3wFSN3V/llXmZImwuKz3oVCEU5AHex/3lo1z/xKzj/bf73AMzP0mKSPLBXJ4dNvFWNhTtnuuR8r/z4kGeHoWDZp1487582755342","status":1}'
+    data = '{"rid":"' + rid + '","callFrom":"web","deviceId":"WHJMrwNw1k/HUzTr0hYmijk0KhhQzzmgjZFwOjrZYOFjfFDAkMZgzKeMmrN2tVDxHzZ9cvWmChlQv7pXm2dhRB/Ex8ujduldaW7a2RIP99PHlvh2mLIhP0JCCf1UjlEyVgSGTBChib8MbzkQDHYspT1NdEbdfHLD20nMw/1BAGS59+ROhTvMVHxDOCFiqTi2NOcEeWH6CQpWrWKDSO0H3+nXy4OQCavxEhI4r9lejmw+uxGYRfiRA0mwyLAry6xzjl+CU/sOZp917nrzmGYQROw==1487582755342","status":1}'
     print(data)
     response = requests.post('https://www.xiaohongshu.com/fe_api/burdock/v2/shield/captcha', headers=headers,
                              cookies=cookies, data=data, timeout=5)
@@ -347,7 +356,7 @@ def shumei_verify():
 
     headers = {
         'Host': 'fp-it.fengkongcloud.com',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
         'sec-fetch-dest': 'script',
         'accept': '*/*',
         'sec-fetch-site': 'cross-site',
@@ -374,6 +383,8 @@ def shumei_verify():
 def verify():
     x = crack()
     if x['success']:
+        print('hhhhhhhhhhhhhhhhhhhhhhhhh')
+        time.sleep(1000000)
         rid = x['data']
         xhs_capture_verify(rid=rid)
         shumei_verify()
@@ -384,7 +395,7 @@ if __name__ == '__main__':
         'authority': 'www.xiaohongshu.com',
         'cache-control': 'max-age=0',
         'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
         'sec-fetch-dest': 'document',
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'sec-fetch-site': 'same-origin',
@@ -395,11 +406,13 @@ if __name__ == '__main__':
     }
     referer_url = 'https://www.xiaohongshu.com/web-login/captcha?redirectPath=https%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F559ba95cf5a263177913fb00'
     # url='https://www.xiaohongshu.com/user/profile/5c3b5f3a000000000601b731'
-    response = requests.get(url=referer_url, timeout=5, headers=headers)
-    print(response.text)
-    if "滑块验证" in response.text:
-        print("被封禁")
-        verify()
-    else:
-        time.sleep(2)
-        print('未封禁')
+    for i in range(100):
+        print('-' * 90)
+        response = requests.get(url=referer_url, timeout=5, headers=headers)
+        print(response.text)
+        if "滑块验证" in response.text:
+            print("被封禁")
+            verify()
+        else:
+            time.sleep(2)
+            print('未封禁')

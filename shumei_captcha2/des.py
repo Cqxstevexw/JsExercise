@@ -21,3 +21,5 @@ def encrypt(key, text):
 def decrypt(key, text):
     decrypter = DES.new(key.encode(), DES.MODE_ECB)
     return decrypter.decrypt(text).decode()
+
+
