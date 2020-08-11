@@ -91,7 +91,7 @@ def _encrypt_trace(k, trace, distance):
         'sm': -1
     }
     # 最后加密 DES
-    return encrypt(new_key, json.dumps(data).replace(' ', '')).decode()
+    return new_key, encrypt(new_key, json.dumps(data).replace(' ', '')).decode()
 
 
 def _pic_download(url, type):
@@ -221,12 +221,13 @@ def _generate_trace(distance, start_time):
         j += 1
     trace = []
     for index, x in enumerate(tracks_list):
-        trace.append([x, y_list[index], timestamp_list[index] - start_time])
+        # trace.append([x, y_list[index], timestamp_list[index] - start_time])
+        trace.append([x, y_list[index], index * 100])
     print(trace)
     return trace
 
 
-def _slider_verify(act, rid):
+def _slider_verify(new_key, trace, rid, running_time, distance):
     """
     验证
     :param act:
@@ -234,22 +235,23 @@ def _slider_verify(act, rid):
     :return:
     """
     url = 'https://captcha.fengkongcloud.com/ca/v2/fverify'
+    trace_str = str(trace).replace(u' ', '')
     params = {
         # getMouseAction()
-        "act.os": "web_pc", # 电脑网页端
-        "be": "W5jfUyGuB5w=",   # console值, 1
-        "dj": "9CIOZDUPyjA=",   # 鼠标移动总时间
-        "jr": "SJ5zO5byIjM=",   # 浏览器展示图片长度400
-        "ke": "TrqMDt+cB48=",   # runBotDetection值,0
-        "kw": "7xDP3aCmdEA=",   # 浏览器展示图片高度200
-        "nw": "PVcTg6vY9/U=",
-        # [(0,0,0),(移动的距离,-1,123)鼠标结束点位置]
-        "wz": "C/pJvd2GxsprrKzY1BiAItPt+sgap9LGBEUHPFcDPp70smuyDT4Nj00FSecFypa/iSCqU4ggak+Tn/pWe4fuQRKJUmjh0yigLd7M2iBwmH4=",
-        "zy": "QNA6H8lZT98=",# 移动的距离/400
+        "act.os": "web_pc",  # 电脑网页端
+        "be": encrypt(new_key, '1'),  # getEncryptContent(console值, 1)   new_key
+        "dj": encrypt(new_key, str(running_time)),  # getEncryptContent(鼠标移动总时间ms)   new_key
+        "jr": encrypt(new_key, '400'),  # getEncryptContent(浏览器展示图片长度400)   new_key
+        "ke": encrypt(new_key, '0'),  # getEncryptContent(runBotDetection值,0)   new_key
+        "kw": encrypt(new_key, '200'),  # getEncryptContent(浏览器展示图片高度200)   new_key
+        "nw": encrypt(new_key, '-1'),  # getEncryptContent(-1)   new_key
+        # getEncryptContent(轨迹数组[(x,y,累计运动时间ms)...])   new_key
+        "wz": encrypt(new_key, trace_str),
+        "zy": encrypt(new_key, str(distance / 400.0)),  # getEncryptContent(移动的距离/400)   new_key
 
-        "bx": "C22bwpGF1gs=",  # getEncryptContent("web")
-        "ik": "BPYw6OTzSQM=",  # getEncryptContent("default")
-        "ly": "aSznDKeppSw=",  # getEncryptContent("zh-cn")
+        "bx": encrypt(new_key, 'web'),  # getEncryptContent("web")    encrypt(new_key,'web')
+        "ik": encrypt(new_key, 'default'),  # getEncryptContent("default")   encrypt(new_key,'default')
+        "ly": encrypt(new_key, 'zh-cn'),  # getEncryptContent("zh-cn")   encrypt(new_key,'zh-cn')
 
         # 请求图片返回的
         "rid": rid,
@@ -300,12 +302,21 @@ def crack():
     start_time = int(time.time() * 1000)
     time.sleep(random.uniform(0.01, 0.05))
     trace = _generate_trace(distance, start_time)
-    act = _encrypt_trace(_init_data['k'], trace, distance)
+    running_time = int(time.time() * 1000) - start_time
+
+    # 旧方法
+    # new_key, act = _encrypt_trace(_init_data['k'], trace, distance)
+
+    k = _init_data['k']
     rid = _init_data['rid']
-    result = _slider_verify(act, rid)
+
+    # 对 k 值进行 base64 解码
+    text = base64.b64decode(k)
+    # 对解码后的 k 值进行 DES 解密（密钥: sshummei）, 取前8位作为下一次加密的密钥
+    new_key = decrypt('sshummei', text)[:8]
+
+    result = _slider_verify(new_key, trace, rid, running_time, distance)
     if result['riskLevel'] == 'PASS':
-        print('成功!!!' * 90)
-        time.sleep(100000)
         return {
             'success': 1,
             'message': '校验成功! ',
@@ -345,7 +356,6 @@ def xhs_capture_verify(rid):
         'Accept-Language': 'zh-CN,zh;q=0.9',
     }
     data = '{"rid":"' + rid + '","callFrom":"web","deviceId":"WHJMrwNw1k/HUzTr0hYmijk0KhhQzzmgjZFwOjrZYOFjfFDAkMZgzKeMmrN2tVDxHzZ9cvWmChlQv7pXm2dhRB/Ex8ujduldaW7a2RIP99PHlvh2mLIhP0JCCf1UjlEyVgSGTBChib8MbzkQDHYspT1NdEbdfHLD20nMw/1BAGS59+ROhTvMVHxDOCFiqTi2NOcEeWH6CQpWrWKDSO0H3+nXy4OQCavxEhI4r9lejmw+uxGYRfiRA0mwyLAry6xzjl+CU/sOZp917nrzmGYQROw==1487582755342","status":1}'
-    print(data)
     response = requests.post('https://www.xiaohongshu.com/fe_api/burdock/v2/shield/captcha', headers=headers,
                              cookies=cookies, data=data, timeout=5)
     print(response.text)
@@ -383,8 +393,7 @@ def shumei_verify():
 def verify():
     x = crack()
     if x['success']:
-        print('hhhhhhhhhhhhhhhhhhhhhhhhh')
-        time.sleep(1000000)
+        print('成功!!!' * 40)
         rid = x['data']
         xhs_capture_verify(rid=rid)
         shumei_verify()
@@ -406,7 +415,7 @@ if __name__ == '__main__':
     }
     referer_url = 'https://www.xiaohongshu.com/web-login/captcha?redirectPath=https%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F559ba95cf5a263177913fb00'
     # url='https://www.xiaohongshu.com/user/profile/5c3b5f3a000000000601b731'
-    for i in range(100):
+    for i in range(20):
         print('-' * 90)
         response = requests.get(url=referer_url, timeout=5, headers=headers)
         print(response.text)
