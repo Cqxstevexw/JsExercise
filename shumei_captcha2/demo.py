@@ -47,7 +47,7 @@ def _init_slider():
         "lang": "zh-cn",
         "organization": "eR46sBuqF0fdw7KWFLYa"
     }
-    resp = requests.get(url, params=params, headers=headers, timeout=5)
+    resp = s.get(url, params=params, headers=headers, timeout=5)
     result = json.loads(resp.text.replace('{}('.format(params['callback']), '').replace(')', ''))
     if result['riskLevel'] == 'PASS':
         return {
@@ -102,7 +102,7 @@ def _pic_download(url, type):
     :return:
     """
     img_path = os.path.abspath(os.path.dirname(__file__)) + '/' + '{}.jpg'.format(type)
-    img_data = requests.get(url, timeout=5).content
+    img_data = s.get(url, timeout=5).content
     with open(img_path, 'wb') as f:
         f.write(img_data)
     return img_path
@@ -262,14 +262,14 @@ def _slider_verify(new_key, trace, rid, running_time, distance):
         "sdkver": "1.1.3",
         "callback": "sm_{}".format(int(time.time() * 1000)),
     }
-    resp = requests.get(url, params=params, headers=headers, timeout=5)
+    resp = s.get(url, params=params, headers=headers, timeout=5)
     result = json.loads(resp.text.replace('{}('.format(params['callback']), '').replace(')', ''))
     print('验证: {}'.format(result))
     return result
 
 
 def download_cap(img, fn):
-    res = requests.get(img)
+    res = s.get(img)
     with open(fn, "wb") as f:
         f.write(res.content)
 
@@ -330,40 +330,33 @@ def crack():
 
 
 def xhs_capture_verify(rid):
-    import requests
-
-    cookies = {
-        'smidV2': '2020030823214532b9386755b96f8d9e2c2d61a27e3e4d00c8f0fe528ce4960',
-        'xhsTrackerId': '296b8562-b1d4-425c-c257-fc0c26ec4c0b',
-        'timestamp1': '170352493',
-        'hasaki': 'JTVCJTIyTW96aWxsYSUyRjUuMCUyMChNYWNpbnRvc2glM0IlMjBJbnRlbCUyME1hYyUyME9TJTIwWCUyMDEwXzE1XzMpJTIwQXBwbGVXZWJLaXQlMkY1MzcuMzYlMjAoS0hUTUwlMkMlMjBsaWtlJTIwR2Vja28pJTIwQ2hyb21lJTJGODAuMC4zOTg3LjEzMiUyMFNhZmFyaSUyRjUzNy4zNiUyMiUyQyUyMnpoLUNOJTIyJTJDMjQlMkMtNDgwJTJDdHJ1ZSUyQ3RydWUlMkN0cnVlJTJDJTIydW5kZWZpbmVkJTIyJTJDJTIyZnVuY3Rpb24lMjIlMkNudWxsJTJDJTIyTWFjSW50ZWwlMjIlMkMxMiUyQzglMkNudWxsJTJDJTIyQ2hyb21lJTIwUERGJTIwUGx1Z2luJTNBJTNBUG9ydGFibGUlMjBEb2N1bWVudCUyMEZvcm1hdCUzQSUzQWFwcGxpY2F0aW9uJTJGeC1nb29nbGUtY2hyb21lLXBkZn5wZGYlM0JDaHJvbWUlMjBQREYlMjBWaWV3ZXIlM0ElM0ElM0ElM0FhcHBsaWNhdGlvbiUyRnBkZn5wZGYlM0JOYXRpdmUlMjBDbGllbnQlM0ElM0ElM0ElM0FhcHBsaWNhdGlvbiUyRngtbmFjbH4lMkNhcHBsaWNhdGlvbiUyRngtcG5hY2x+JTIyJTJDMzgwMTgwMDQ1NyU1RA==',
-        'timestamp2': 'b049c72136b968427e091f3f2a983821',
-        'xhs_spses.5dde': '*',
-        'xhs_spid.5dde': 'e79a8d3e9aa79b81.1583730809.11.1583898988.1583893956.4a1fec74-76bf-4758-934d-b07b9ab3baa1',
-    }
-
     headers = {
-        'Host': 'www.xiaohongshu.com',
-        'Accept': 'application/json, text/plain, */*',
-        'Sec-Fetch-Dest': 'empty',
-        'X-Sign': 'X586039fbdde8a4a35274f35c5c39ba72',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'Origin': 'https://www.xiaohongshu.com',
-        'Sec-Fetch-Site': 'same-origin',
-        'Sec-Fetch-Mode': 'cors',
-        'Referer': 'https://www.xiaohongshu.com/web-login/captcha?redirectPath=http%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F595657e450c4b408a2cb9581',
-        'Accept-Language': 'zh-CN,zh;q=0.9',
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36",
+        "sec-fetch-dest": "empty",
+        "accept-encoding": "gzip, deflate, br",
+        "sec-fetch-site": "same-origin",
+        "origin": "https://www.xiaohongshu.com",
+        "x-sign": "X0f61f7eb6b2c6201c56354cd8b3718ea",
+        "cookie": "xhsuid=bMCd0lBd581ve2YD; timestamp2=1597058783904d6ed2bfdebde2d2b; timestamp2.sig=isqvIW_JcDXmMlHn3JS0FgHigOnMgUjE-QpCpPYBvqk; smidV2=20200715205903e5eeefb846a4e1052665d4a6dc3223d60023b1dbaaa6bfba0; xhs_spid.5dde=43b1248d3c75b0d8.1594816905.16.1597118314.1597107897.8255255f-72a2-4c8e-9376-e841c3ed0b3f",
+        "accept": "application/json, text/plain, */*",
+        "content-length": "378",
+        "content-type": "application/json;charset=UTF-8",
+        "sec-fetch-mode": "cors",
+        "referer": "https://www.xiaohongshu.com/web-login/captcha?redirectPath=https%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F559ba95cf5a263177913fb00",
+        "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7"
     }
-    data = '{"rid":"' + rid + '","callFrom":"web","deviceId":"WHJMrwNw1k/HUzTr0hYmijk0KhhQzzmgjZFwOjrZYOFjfFDAkMZgzKeMmrN2tVDxHzZ9cvWmChlQv7pXm2dhRB/Ex8ujduldaW7a2RIP99PHlvh2mLIhP0JCCf1UjlEyVgSGTBChib8MbzkQDHYspT1NdEbdfHLD20nMw/1BAGS59+ROhTvMVHxDOCFiqTi2NOcEeWH6CQpWrWKDSO0H3+nXy4OQCavxEhI4r9lejmw+uxGYRfiRA0mwyLAry6xzjl+CU/sOZp917nrzmGYQROw==1487582755342","status":1}'
-    response = requests.post('https://www.xiaohongshu.com/fe_api/burdock/v2/shield/captcha', headers=headers,
-                             cookies=cookies, data=data, timeout=5)
+    data = {
+        "rid": rid,
+        "callFrom": "web",
+        "status": 0,
+        'deviceId': 'WHJMrwNw1k/HUzTr0hYmijk0KhhQzzmgjZFwOjrZYOFjfFDAkMZgzKeMmrN2tVDxHzZ9cvWmChlQv7pXm2dhRB/Ex8ujduldax3bvOoQ9weJcOO0nrbOWOfZQlCinLJpEunpF+0XZStxb9MXDYl/d2pEBOWHDS6ja4jWD36Dj/266ZR/Mmi6Xm1c56rzIlK6O/8/D9LXXDIU4jOYkjAH8HBJG6lumeYBgBMW+gEwyxaqBPufoJquvNmWKOIGULr211+sn3yjf99EMRRJ7n/5I4g==1487582755342',
+    }
+    url = 'https://www.xiaohongshu.com/fe_api/burdock/v2/shield/captcha?c=pp'
+    response = s.post(url, headers=headers, data=json.dumps(data), timeout=5)
     print(response.text)
 
 
 def shumei_verify():
-    import requests
-
     headers = {
         'Host': 'fp-it.fengkongcloud.com',
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
@@ -385,7 +378,7 @@ def shumei_verify():
         ('_', timestamp),
     )
 
-    response = requests.get('https://fp-it.fengkongcloud.com/v3/profile/web', headers=headers, params=params)
+    response = s.get('https://fp-it.fengkongcloud.com/v3/profile/web', headers=headers, params=params)
     print('=' * 30)
     print(response.text)
 
@@ -396,10 +389,11 @@ def verify():
         print('成功!!!' * 40)
         rid = x['data']
         xhs_capture_verify(rid=rid)
-        shumei_verify()
+        # shumei_verify()
 
 
 if __name__ == '__main__':
+    s = requests.session()
     headers = {
         'authority': 'www.xiaohongshu.com',
         'cache-control': 'max-age=0',
@@ -414,10 +408,9 @@ if __name__ == '__main__':
         'accept-language': 'zh-CN,zh;q=0.9',
     }
     referer_url = 'https://www.xiaohongshu.com/web-login/captcha?redirectPath=https%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F559ba95cf5a263177913fb00'
-    # url='https://www.xiaohongshu.com/user/profile/5c3b5f3a000000000601b731'
-    for i in range(20):
+    for i in range(10):
         print('-' * 90)
-        response = requests.get(url=referer_url, timeout=5, headers=headers)
+        response = s.get(url=referer_url, timeout=5, headers=headers)
         print(response.text)
         if "滑块验证" in response.text:
             print("被封禁")
@@ -425,3 +418,4 @@ if __name__ == '__main__':
         else:
             time.sleep(2)
             print('未封禁')
+        time.sleep(1)

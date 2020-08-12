@@ -4,25 +4,19 @@ import re
 import time
 
 text = """
-zy: QNA6H8lZT98=
-ly: aSznDKeppSw=
-rid: 202008102035536e9df6ee406a5a3fc0
-bx: C22bwpGF1gs=
-ik: BPYw6OTzSQM=
-jr: SJ5zO5byIjM=
-nw: PVcTg6vY9/U=
-wz: C/pJvd2GxsprrKzY1BiAItPt+sgap9LGBEUHPFcDPp70smuyDT4Nj00FSecFypa/iSCqU4ggak+Tn/pWe4fuQRKJUmjh0yigLd7M2iBwmH4=
-organization: eR46sBuqF0fdw7KWFLYa
-act.os: web_pc
-rversion: 1.0.1
-ke: TrqMDt+cB48=
-callback: sm_1597062963270
-dj: 9CIOZDUPyjA=
-protocol: 4
-ostype: web
-kw: 7xDP3aCmdEA=
-be: W5jfUyGuB5w=
-sdkver: 1.1.3
+accept: application/json, text/plain, */*
+accept-encoding: gzip, deflate, br
+accept-language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7
+content-length: 378
+content-type: application/json;charset=UTF-8
+cookie: xhsuid=bMCd0lBd581ve2YD; timestamp2=1597058783904d6ed2bfdebde2d2b; timestamp2.sig=isqvIW_JcDXmMlHn3JS0FgHigOnMgUjE-QpCpPYBvqk; smidV2=20200715205903e5eeefb846a4e1052665d4a6dc3223d60023b1dbaaa6bfba0; xhs_spid.5dde=43b1248d3c75b0d8.1594816905.16.1597118314.1597107897.8255255f-72a2-4c8e-9376-e841c3ed0b3f
+origin: https://www.xiaohongshu.com
+referer: https://www.xiaohongshu.com/web-login/captcha?redirectPath=https%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F559ba95cf5a263177913fb00
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: same-origin
+user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36
+x-sign: X0f61f7eb6b2c6201c56354cd8b3718ea
 
 
 """
