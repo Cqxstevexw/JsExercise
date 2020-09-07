@@ -1,5 +1,4 @@
 # -*- coding：utf-8 -*-
-
 import base64
 
 from Crypto.Cipher import DES

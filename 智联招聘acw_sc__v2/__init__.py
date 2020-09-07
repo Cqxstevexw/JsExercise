@@ -79,16 +79,16 @@ var getArg2 = function (arg1) {
 
 
 def try_get():
-    print '请求首页'
+    # print '请求首页'
     # url = 'http://company.zhaopin.com/CC406882586.htm'
     url = 'http://jobs.zhaopin.com/CC406882586J00488503302.htm'
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
     }
     res = s.get(url=url, headers=headers)
-    print 'try_get: ', res.url
-    print 'try_get: ', res.status_code
-    print 'try_get: ', res.headers
+    # print 'try_get: ', res.url
+    # print 'try_get: ', res.status_code
+    # print 'try_get: ', res.headers
     arg1 = ''.join(re.findall(u"arg1='(.*?)';", res.text))
     acw_sc__v2 = get_v2(arg1)
     # arg1 = re.findall(ur"var arg1='([0-9A-Z]+)';", res.text)
@@ -96,11 +96,11 @@ def try_get():
     # _0x23a392 = unsbox(arg1)
     # acw_sc__v2 =  hexXor(key, _0x23a392)
     s.cookies.set('acw_sc__v2', acw_sc__v2)
-    print s.cookies
+    print(s.cookies)
 
 
 def try_get2():
-    print '请求首页'
+    # print '请求首页'
     # url = 'http://company.zhaopin.com/CC406882586.htm'
     url = 'http://jobs.zhaopin.com/CC406882586J00488503303.htm'
     headers = {
@@ -108,10 +108,10 @@ def try_get2():
     }
 
     res = s.get(url=url, headers=headers)
-    print 'try_get2: ', res.status_code
-    print 'try_get2: ', res.headers
-    print 'try_get2: ', s.cookies
-    print res.text
+    # print 'try_get2: ', res.status_code
+    # print 'try_get2: ', res.headers
+    # print 'try_get2: ', s.cookies
+    # print res.text
 
 
 def hexXor(_0x4e08d8, _0x23a392):

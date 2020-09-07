@@ -1,16 +1,5 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-"""
-    demo.py
-    ~~~~~~~~~~~~~~~~~~~~~~~
-
-    Description of this file
-
-    :author: LiYang
-    :copyright: (c) 2020, Tungee
-    :date created: 2020/7/16
-    :python version: 2.7
-"""
 import base64
 import json
 import os
@@ -24,7 +13,6 @@ import requests
 from des import encrypt, decrypt
 
 headers = {
-    "cookie": "xhsTrackerId=f760457e-c22d-4165-c1a6-543e85a626ef; xhsTracker=url=user-profile&searchengine=baidu; smidV2=20200715205903e5eeefb846a4e1052665d4a6dc3223d60023b1dbaaa6bfba0; xhs_spses.5dde=*; xhs_spid.5dde=43b1248d3c75b0d8.1594816905.14.1597058739.1597052656.b9d3bbb2-461b-4059-a650-c0bdd2695d68",
     "Referer": "https://www.xiaohongshu.com/web-login/captcha?redirectPath=http%3A%2F%2Fwww.xiaohongshu.com%2Fuser%2Fprofile%2F5885bc185e87e771bd4647e7",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
 }
@@ -49,6 +37,7 @@ def _init_slider():
     }
     resp = s.get(url, params=params, headers=headers, timeout=5)
     result = json.loads(resp.text.replace('{}('.format(params['callback']), '').replace(')', ''))
+    res=resp.text
     if result['riskLevel'] == 'PASS':
         return {
             'k': result['detail']['k'],
@@ -387,8 +376,8 @@ def verify():
     x = crack()
     if x['success']:
         print('成功!!!' * 40)
-        rid = x['data']
-        xhs_capture_verify(rid=rid)
+        # rid = x['data']
+        # xhs_capture_verify(rid=rid)
         # shumei_verify()
 
 

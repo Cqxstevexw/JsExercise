@@ -11,6 +11,7 @@
     :date created: 2020/8/31
     :python version: 2.7
 """
+import json
 import sys
 
 reload(sys)
@@ -147,9 +148,10 @@ def unsbox(arg):
 if __name__ == '__main__':
     # get_v2(1)
     try_get()
-    try_get2()
+    # try_get2()
     # arg1 = 'E6D117511CE1576BED6657BDB9938A7050E212BD'
     # key = '3000176000856006061501533003690027800375'
     # _0x23a392 = unsbox(arg1)
     # arg2 = 'acw_sc__v2=' + hexXor(key, _0x23a392)
     # print arg2
+
