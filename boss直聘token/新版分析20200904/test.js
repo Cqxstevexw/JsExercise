@@ -194,7 +194,7 @@ function aL(cv, cw) {
     cB['hasOwnProperty']('document') && (cz = cB[cx['arHas']],
         cA = cz['cookie'],
         c0(cA));
-    console.log('a9--start: ', a9);
+    console.log('-----------a9--start--------: ', a9);
     cx['KVSLL'](b9),
         cE = Array['prototype']['push'],
         cy = cB[cx['MWNbr']] && cB['navigator']['cookieEnabled'] || 0x0,
@@ -12145,7 +12145,7 @@ function cu(cv, cw) {
     return cB = cv,
         cx['kFbwK'](c4),
         console.log('-----cx["LpSMl"]-----生成y,a9----------------'),
-        // console.log('aL: ',aL),
+        console.log('aL: ',aL),
         console.log('cB: ', cB),
         console.log('cw: ', cw),
         cz = cx['LpSMl'](aL, cB, cw),

@@ -12,20 +12,16 @@
     :date created: 2020/4/2
     :python version: 2.7
 """
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
-
-
-import json
 import re
-
+import sys
 import time
 import urllib
 
 import execjs
 import requests
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 node = execjs.get()
 s = requests.session()
@@ -210,7 +206,7 @@ def try_get4(zp_stoken, security_check_url):
     print 'try_get4: ', response.status_code
     print 'try_get4: ', response.headers
     print 'try_get4: ', s.cookies
-    response.encoding='utf-8'
+    response.encoding = 'utf-8'
     print response.text
     if 'security-check.html' in response.url:
         print '失败'
@@ -232,12 +228,3 @@ def try_get4(zp_stoken, security_check_url):
 
 if __name__ == '__main__':
     try_get()
-    # with open(r'ebc0e06b_source.js', 'r') as f:
-    #     js_source = f.read()
-    # print type(js_source)
-    # seed = "spMLhVQ5czDCIRaMZzPNaQPnq30PMHkzMamtU/WSj28="
-    # ts = 1586509436822
-    # code = get_zp_stoken(seed, ts, js_source)
-    # print code
-# f19avvzpCeYWw5d+n5UUAon2mCl4fElgSW9YQjT+CbzgehsRaaVrptCU7QnmR2sHCOtkCmZjopY48HHIblcu579wnm7CLKF4gdB1SEwqFRU9oMOp/OVtfhOLM73O/8QkUF/I
-# f19avvzpCeYWw5d+n5UUAon2mCl4fElgSW9YQjT+CbzgehsRaaVrptCU7QnmR2sHCOtkCmZjopY48HHIblcu579wnm7CLKF4gdB1SEwqFRU9oMOp/OVtfhOLM73O/8QkUF/I
