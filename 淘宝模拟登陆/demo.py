@@ -172,7 +172,7 @@ def input_time_random():
 
 if __name__ == '__main__':
     username = '969096513@qq.com'
-    password = 'li670964096ang'
+    password = ''
     url = 'https://login.taobao.com/member/login.jhtml?redirectURL=https%3A%2F%2Fwww.taobao.com%2F'
     # url = 'https://shopsearch.taobao.com/search?q=janelove&js=1&initiative_id=staobaoz_20200916&ie=utf8'
     loop = asyncio.get_event_loop()
